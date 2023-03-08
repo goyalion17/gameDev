@@ -18,9 +18,17 @@ window.addEventListener('load', function() {
             this.speedY = 0
             this.dx = 0
             this.dy = 0
+            this.spriteWidth = 255
             this.speedModifier = 5
+            this.spriteHeight = 255
+            this.width = this.spriteWidth
+            this.height = this.spriteHeight
+            this.spriteX
+            this.spriteY
+            this.image = document.getElementById('bull')
         }
         draw(context) {
+            context.drawImage(this.image, 0, 0, this.spriteWidth, this.spriteHeight, this.spriteX, this.spriteY, this.width, this.height)
             context.beginPath();
             context.arc(this.collisionX, this.collisionY, this.collisionRadius, 0, Math.PI * 2);
             context.save()
@@ -46,6 +54,8 @@ window.addEventListener('load', function() {
             }
             this.collisionX += this.speedX * this.speedModifier
             this.collisionY += this.speedY * this.speedModifier
+            this.spriteX = this.collisionX - this.width * 0.5
+            this.spriteY = this.collisionY - this.height * 0.5 - 100
             // collisions with obstacles
             this.game.obstacles.forEach(obstacle => {
                 //[(distance < sumOfRadii), distance, sumOfRadii, dx, dy]
