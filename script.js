@@ -258,7 +258,7 @@ window.addEventListener('load', function() {
             this.game = game
             this.collisionRadius = 30
             this.speedX= Math.random() * 3 + 0.5
-            this.image = document.getElementById('toad')
+            this.image = document.getElementById('toads')
             this.spriteWidth = 140
             this.spriteHeight = 260
             this.width = this.spriteWidth
@@ -267,9 +267,11 @@ window.addEventListener('load', function() {
             this.collisionY = this.game.topMargin + (Math.random() * (this.game.height - this.game.topMargin))
             this.speedX
             this.speedY
+            this.frameX = 0
+            this.frameY = Math.floor(Math.random() * 4)
         }
         draw(context) {
-            context.drawImage(this.image, this.spriteX, this.spriteY)
+            context.drawImage(this.image, this.frameX * this.spriteWidth, this.frameY * this.spriteHeight, this.spriteWidth, this.spriteHeight, this.spriteX, this.spriteY, this.width, this.height)
             if (this.game.debug) {
                 context.beginPath();
                 context.arc(this.collisionX, this.collisionY, this.collisionRadius, 0, Math.PI * 2);
@@ -287,6 +289,7 @@ window.addEventListener('load', function() {
             if (this.spriteX + this.width < 0) {
                 this.collisionX = this.game.width + this.width + Math.random() * this.game.width * 0.5
                 this.collisionY = this.game.topMargin + (Math.random() * (this.game.height - this.game.topMargin))
+                this.frameY = Math.floor(Math.random() * 4)
             }
             let collisionObject = [this.game.player, ...this.game.obstacles]
             collisionObject.forEach(object => {
@@ -362,7 +365,7 @@ window.addEventListener('load', function() {
             this.eggTimer = 0
             this.eggInterval = 1000
             this.numberOfObstacles = 10
-            this.maxEggs = 20
+            this.maxEggs = 5
             this.obstacles = [];
             this.eggs = []
             this.enemies = []
@@ -452,7 +455,7 @@ window.addEventListener('load', function() {
             this.particles = this.particles.filter(object => !object.markedForDeletion)
         }
         init() {
-            for (let i = 0; i < 3; i++) {
+            for (let i = 0; i < 5; i++) {
                 this.addEnemy()
             }
             let attempts = 0
