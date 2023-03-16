@@ -31,6 +31,12 @@ window.addEventListener('load', function() {
             this.frameY = 5
             this.image = document.getElementById('bull')
         }
+        restart() {
+            this.collisionX = this.game.width * 0.5;
+            this.collisionY = this.game.height * 0.5;
+            this.spriteX = this.collisionX - this.width * 0.5
+            this.spriteY = this.collisionY - this.height * 0.5 - 100
+        }
         draw(context) {
             context.drawImage(this.image, this.frameX * this.spriteWidth, this.frameY * this.spriteHeight, this.spriteWidth, this.spriteHeight, this.spriteX, this.spriteY, this.width, this.height)
             if (this.game.debug) {
@@ -165,7 +171,7 @@ window.addEventListener('load', function() {
             this.spriteX = this.collisionX - this.width * 0.5
             this.spriteY = this.collisionY - this.height * 0.5 - 30
             // collisions
-            let collisionObject = [this.game.player, ...this.game.obstacles, ...this.game.enemies]
+            let collisionObject = [this.game.player, ...this.game.obstacles, ...this.game.enemies, ...this.game.hatchlings]
             collisionObject.forEach(object => {
                 let [collision, distance, sumOfRadii, dx, dy] = this.game.checkCollision(this, object)
                 if (collision) {
@@ -218,7 +224,7 @@ window.addEventListener('load', function() {
         update() {
             this.collisionY -= this.speedY
             this.spriteX = this.collisionX - this.width * 0.5
-            this.spriteY = this.collisionY - this.height * 0.5 - 50
+            this.spriteY = this.collisionY - this.height * 0.5 - 40
             // move to safety
             if (this.collisionY < this.game.topMargin) {
                 this.markedForDeletion = true
@@ -241,7 +247,7 @@ window.addEventListener('load', function() {
             })
             // collision with enemies
             this.game.enemies.forEach(enemy => {
-                if (this.game.checkCollision(this, enemy)[0]) {
+                if (this.game.checkCollision(this, enemy)[0] && !this.game.gameOver) {
                     this.markedForDeletion = true
                     this.game.removeGameObjects()
                     this.game.lostHatchlings++
@@ -373,7 +379,7 @@ window.addEventListener('load', function() {
             this.particles = []
             this.gameObject = []
             this.score = 0
-            this.winningScore = 1
+            this.winningScore = 30
             this.gameOver = false
             this.lostHatchlings = 0
             this.mouse = {
@@ -402,6 +408,7 @@ window.addEventListener('load', function() {
             window.addEventListener('keydown', e => {
                 console.log('e: ', e);
                 if (e.key == 'd') this.debug = !this.debug
+                else if (e.key == 'r') this.restart()
             })
         }
         render(context, deltaTime) {
@@ -451,7 +458,7 @@ window.addEventListener('load', function() {
                 context.shadowColor = 'black'
                 let message1
                 let message2
-                if (this.timer.lostHatchlings <= 5) {
+                if (this.lostHatchlings <= 5) {
                     message1 = 'Bullseye!!!'
                     message2 = 'You bullied the bulliest!'
                 } else {
@@ -483,6 +490,23 @@ window.addEventListener('load', function() {
             this.eggs = this.eggs.filter(object => !object.markedForDeletion)
             this.hatchlings = this.hatchlings.filter(object => !object.markedForDeletion)
             this.particles = this.particles.filter(object => !object.markedForDeletion)
+        }
+        restart() {
+            this.player.restart()
+            this.obstacles = [];
+            this.eggs = []
+            this.enemies = []
+            this.hatchlings = []
+            this.particles = []
+            this.mouse = {
+                x: this.width * 0.5,
+                y: this.height * 0.5,
+                pressed: false
+            }
+            this.score = 0
+            this.lostHatchlings = 0
+            this.gameOver = false
+            this.init()
         }
         init() {
             for (let i = 0; i < 5; i++) {
